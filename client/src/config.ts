@@ -29,3 +29,7 @@ export const faucetUri =
 export const verbose = true
 export const analyticsId = 'UA-60614729-11'
 export const allowPricing = process.env.REACT_APP_ALLOW_PRICING || false
+
+// https://ipfs.github.io/public-gateway-checker/
+export const ipfsGatewayUri =
+    process.env.REACT_APP_IPFS_GATEWAY_URI || 'https://gateway.ipfs.io'
