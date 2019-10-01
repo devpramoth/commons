@@ -7,6 +7,8 @@ import AssetModel from '../../models/AssetModel'
 import { User, Market } from '../../context'
 import Step from './Step'
 import Progress from './Progress'
+import Gdpr from './Gdpr'
+import Terms from './Terms'
 import ReactGA from 'react-ga'
 import { allowPricing } from '../../config'
 import { steps } from '../../data/form-publish.json'
@@ -27,7 +29,7 @@ interface PublishState {
     type?: AssetType
     copyrightHolder?: string
     categories?: string
-
+    datatype?: string
     currentStep?: number
     publishingStep?: number
     isPublishing?: boolean
@@ -35,6 +37,10 @@ interface PublishState {
     publishedDid?: string
     publishingError?: string
     validationStatus?: any
+    gdprModalOpen?: boolean
+    gdprAgreed?: boolean
+    termsAgreed?: string
+    termsModalOpen?: boolean
 }
 
 if (allowPricing) {
@@ -61,7 +67,7 @@ class Publish extends Component<{}, PublishState> {
         license: '',
         copyrightHolder: '',
         categories: '',
-
+        datatype: '',
         currentStep: 1,
         isPublishing: false,
         isPublished: false,
@@ -69,24 +75,49 @@ class Publish extends Component<{}, PublishState> {
         publishingError: '',
         publishingStep: 0,
         validationStatus: {
-            1: { name: false, files: false, allFieldsValid: false },
+            1: {
+                name: false,
+                files: false,
+                price: false,
+                allFieldsValid: false
+            },
             2: {
                 description: false,
                 categories: false,
                 allFieldsValid: false
             },
             3: {
+                datatype: false,
                 author: false,
                 copyrightHolder: false,
                 license: false,
                 allFieldsValid: false
+            },
+            4: {
+                termsAgreed: false,
+                allFieldsValid: false
             }
-        }
+        },
+        gdprModalOpen: false,
+        gdprAgreed: false,
+        termsAgreed: '',
+        termsModalOpen: false
     }
 
     private inputChange = (
         event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
     ) => {
+        // check for terms checkbox
+        if(event.currentTarget.name === 'termsAgreed'){
+            if(this.state.termsAgreed === ''){
+                this.setState({ termsModalOpen: true })
+            } else {
+                this.validateInputs('termsAgreed', '')
+                this.setState({ termsAgreed: '' })
+            }
+            return
+        }
+
         this.validateInputs(event.currentTarget.name, event.currentTarget.value)
 
         this.setState({
@@ -94,18 +125,40 @@ class Publish extends Component<{}, PublishState> {
         })
     }
 
+    private agreeTerms = () => {
+        this.validateInputs('termsAgreed', 'true')
+        this.setState({
+            termsModalOpen: false,
+            termsAgreed: 'i-agree-with-terms-and-conditions'
+        })
+    }
+
+    private cancelTerms = () => {
+        this.setState({ termsModalOpen: false })
+    }
+
     private next = () => {
         let { currentStep } = this.state
-        const totalSteps = steps.length
 
+        // check for gdpr on 3 step
+        if(
+            currentStep === 3 &&
+            this.state.gdprAgreed === false && (
+                this.state.datatype === "anonymised-personal-data" ||
+                this.state.datatype === "personal-data"
+            )
+        ){
+            this.setState({ gdprModalOpen:true })
+            return
+        }
+
+        const totalSteps = steps.length
         currentStep =
             currentStep >= totalSteps - 1 ? totalSteps : currentStep + 1
-
         ReactGA.event({
             category: 'Publish',
             action: 'nextStep ' + currentStep
         })
-
         this.setState({ currentStep })
     }
 
@@ -128,13 +181,16 @@ class Publish extends Component<{}, PublishState> {
             price: '0',
             author: '',
             type: 'dataset' as AssetType,
+            datatype: '',
             license: '',
             copyrightHolder: '',
             categories: '',
             isPublishing: false,
             isPublished: false,
             publishingStep: 0,
-            currentStep: 1
+            currentStep: 1,
+            termsAgreed: '',
+            gdprAgreed: false
         })
     }
 
@@ -233,7 +289,8 @@ class Publish extends Component<{}, PublishState> {
         if (
             validationStatus[3].author &&
             validationStatus[3].copyrightHolder &&
-            validationStatus[3].license
+            validationStatus[3].license &&
+            validationStatus[3].datatype
         ) {
             this.setState(prevState => ({
                 validationStatus: {
@@ -250,6 +307,33 @@ class Publish extends Component<{}, PublishState> {
                     ...prevState.validationStatus,
                     3: {
                         ...prevState.validationStatus[3],
+                        allFieldsValid: false
+                    }
+                }
+            }))
+        }
+
+        //
+        // Step 4
+        //
+        if (
+            validationStatus[4].termsAgreed
+        ) {
+            this.setState(prevState => ({
+                validationStatus: {
+                    ...prevState.validationStatus,
+                    4: {
+                        ...prevState.validationStatus[3],
+                        allFieldsValid: true
+                    }
+                }
+            }))
+        } else {
+            this.setState(prevState => ({
+                validationStatus: {
+                    ...prevState.validationStatus,
+                    4: {
+                        ...prevState.validationStatus[4],
                         allFieldsValid: false
                     }
                 }
@@ -297,7 +381,12 @@ class Publish extends Component<{}, PublishState> {
                     : this.state.price,
                 type: this.state.type,
                 categories: [this.state.categories]
-            })
+            }),
+            additionalInformation: {
+                gdprAgreed: this.state.gdprAgreed ? 'agreed' : 'not-agreed',
+                termsAgreed: this.state.termsAgreed ? 'agreed' : 'not-agreed',
+                datatype: this.state.datatype
+            }
         }
 
         try {
@@ -328,6 +417,19 @@ class Publish extends Component<{}, PublishState> {
         }
 
         this.setState({ isPublishing: false })
+    }
+
+    private agreeGdpr = () => {
+        this.setState({
+            gdprModalOpen: false,
+            gdprAgreed: true
+        }, ()=>{
+            this.next()
+        })
+    }
+
+    private cancelGdpr = () => {
+        this.setState({ gdprModalOpen: false })
     }
 
     public render() {
@@ -364,6 +466,8 @@ class Publish extends Component<{}, PublishState> {
                                     />
                                 ))}
                             </Form>
+                            <Gdpr agree={this.agreeGdpr} cancel={this.cancelGdpr} isModalOpen={this.state.gdprModalOpen}/>
+                            <Terms agree={this.agreeTerms} cancel={this.cancelTerms} isModalOpen={this.state.termsModalOpen}/>
                         </Content>
                     </Route>
                 )}

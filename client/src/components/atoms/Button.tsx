@@ -9,7 +9,9 @@ interface ButtonProps {
     primary?: boolean
     link?: boolean
     href?: string
+    target?: string
     onClick?: any
+    type?: any
     disabled?: boolean
     to?: string
     name?: string

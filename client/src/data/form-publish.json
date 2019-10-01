@@ -82,9 +82,19 @@
       }
     },
     {
-      "title": "Authorship",
+      "title": "Legal",
       "description": "Give proper attribution for your data set.",
       "fields": {
+        "datatype": {
+          "label": "What type of data is it?",
+          "type": "radio",
+          "required": true,
+          "options": [
+            "Personal Data",
+            "Anonymised Personal Data",
+            "No Personal Data"
+          ]
+        },
         "author": {
           "label": "Author",
           "placeholder": "e.g. Jelly McJellyfish",
@@ -122,7 +132,17 @@
     {
       "title": "Register",
       "description": "Splendid, we got all the data. Now let's register your data set.",
-      "content": "After clicking the button below you will be asked by your wallet to sign this request."
+      "content": "After clicking the button below you will be asked by your wallet to sign this request.",
+      "fields": {
+        "termsAgreed": {
+          "label": "Review and agree with terms and conditions",
+          "type": "checkbox",
+          "required": true,
+          "options": [
+            "I agree with terms and conditions"
+          ]
+        }
+      }
     }
   ]
 }

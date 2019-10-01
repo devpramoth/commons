@@ -68,6 +68,7 @@ export default class Step extends PureComponent<StepProps, {}> {
                         !state.validationStatus[currentStep].allFieldsValid
                     }
                     onClick={next}
+                    type={"button"}
                 >
                     Next →
                 </Button>
@@ -160,7 +161,8 @@ export default class Step extends PureComponent<StepProps, {}> {
                                     disabled={
                                         !this.context.isLogged ||
                                         !market.networkMatch ||
-                                        this.props.state.isPublishing
+                                        this.props.state.isPublishing ||
+                                        !this.props.state.validationStatus[4].allFieldsValid
                                     }
                                     primary
                                 >

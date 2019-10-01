@@ -123,6 +123,29 @@ export default class Input extends PureComponent<InputProps, InputState> {
                     </div>
                 )
             case 'radio':
+                return (
+                    <div className={styles.radioGroup}>
+                        {options &&
+                            options.map((option: string, index: number) => (
+                                <div className={styles.radioWrap} key={index}>
+                                    <input
+                                        className={styles.radio}
+                                        id={slugify(option)}
+                                        type={type}
+                                        name={name}
+                                        onChange={onChange}
+                                        value={slugify(option)}
+                                    />
+                                    <label
+                                        className={styles.radioLabel}
+                                        htmlFor={slugify(option)}
+                                    >
+                                        {option}
+                                    </label>
+                                </div>
+                            ))}
+                    </div>
+                )
             case 'checkbox':
                 return (
                     <div className={styles.radioGroup}>
@@ -134,7 +157,8 @@ export default class Input extends PureComponent<InputProps, InputState> {
                                         id={slugify(option)}
                                         type={type}
                                         name={name}
-                                        value={slugify(option)}
+                                        onChange={onChange}
+                                        checked={value === slugify(option)}
                                     />
                                     <label
                                         className={styles.radioLabel}
