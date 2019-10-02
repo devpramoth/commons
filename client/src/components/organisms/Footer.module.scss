@@ -91,3 +91,14 @@
         }
     }
 }
+
+.byoceanprotocol {
+    a {
+        &:hover,
+        &:focus {
+            svg {
+                fill: $brand-pink;
+            }
+        }
+    }
+}

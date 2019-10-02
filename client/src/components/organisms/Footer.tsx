@@ -29,6 +29,15 @@ export default function Footer() {
                             <AiCommons />
                         </a>
                     </p>
+                    <p className={styles.byoceanprotocol}>
+                        Powered by{' '}
+                        <a
+                            href="https://oceanprotocol.com/"
+                            title="Ocean Protocol"
+                        >
+                            Ocean Protocol
+                        </a>
+                    </p>
                     <VersionNumbers account={user.account} minimal />
                 </Content>
             </aside>
