@@ -6,24 +6,24 @@ import Input from '../../components/atoms/Form/Input'
 
 export default class Gdpr extends PureComponent<
     { agree: any, cancel: any, isModalOpen: boolean },
-    { checked: string }
+    { checked: string[] }
 > {
     public state = {
-        checked: ''
+        checked: []
     }
 
     private inputChange = (
         event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
     ) => {
-        if(this.state.checked === ''){
-            this.setState({
-                checked: 'my-offer-complies-with-gdpr-regulations'
-            })
-        }else{
-            this.setState({
-                checked: ''
-            })
+        const value = event.currentTarget.value
+        let checked: any[] = this.state.checked.slice()
+        const index = checked.indexOf(value)
+        if(index !== -1){
+            checked.splice(index, 1);
+        } else {
+            checked.push(value)
         }
+        this.setState({ checked })
     }
 
     public render() {
@@ -59,13 +59,14 @@ export default class Gdpr extends PureComponent<
                             onChange={this.inputChange}
                             value={this.state.checked}
                             options={[
-                                "My offer complies with GDPR regulations"
+                                "My offer complies with GDPR regulations",
+                                "I have copyrights to publish this data"
                             ]}
                         />
                     </div>
                     <Button
                         onClick={this.props.agree}
-                        disabled={this.state.checked === ''}
+                        disabled={this.state.checked.length !== 2}
                         type={"button"}
                         primary
                     >

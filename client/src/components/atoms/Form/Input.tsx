@@ -19,7 +19,7 @@ interface InputProps {
     type?: string
     options?: string[]
     additionalComponent?: any
-    value?: string
+    value?: any
     onChange?(
         event:
             | FormEvent<HTMLInputElement>
@@ -157,8 +157,9 @@ export default class Input extends PureComponent<InputProps, InputState> {
                                         id={slugify(option)}
                                         type={type}
                                         name={name}
+                                        value={slugify(option)}
                                         onChange={onChange}
-                                        checked={value === slugify(option)}
+                                        checked={value[slugify(option)]}
                                     />
                                     <label
                                         className={styles.radioLabel}
