@@ -1,9 +1,6 @@
-[![banner](https://raw.githubusercontent.com/oceanprotocol/art/master/github/repo-banner%402x.png)](https://oceanprotocol.com)
+<h1 align="center">Market</h1>
 
-<h1 align="center">Commons</h1>
-
-> 🏄‍♀️ Marketplace front-end and backend server to explore, download, and publish open data sets.
-> https://commons.oceanprotocol.com
+> 🏄‍♀️ Marketplace front-end and backend server to explore, download, and sell data sets.
 
 [![Build Status](https://travis-ci.com/oceanprotocol/commons.svg?branch=master)](https://travis-ci.com/oceanprotocol/commons)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6a19987e62344b1c9c1d5bc9f315c733)](https://www.codacy.com/app/ocean-protocol/commons)
