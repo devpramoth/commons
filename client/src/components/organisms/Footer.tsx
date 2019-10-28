@@ -15,11 +15,6 @@ export default function Footer() {
         <footer className={styles.footer}>
             <aside className={styles.stats}>
                 <Content wide>
-                    <p>
-                        Online since March 2019.
-                        {market.totalAssets > 0 &&
-                            ` With a total of ${market.totalAssets} registered assets.`}
-                    </p>
                     <p className={styles.aicommons}>
                         Proud supporter of{' '}
                         <a
@@ -38,14 +33,13 @@ export default function Footer() {
                             Ocean Protocol
                         </a>
                     </p>
-                    <VersionNumbers account={user.account} minimal />
                 </Content>
             </aside>
 
             <Content wide>
                 <small>
                     &copy; {new Date().getFullYear()}{' '}
-                    <a href={meta.social[0].url}>{meta.company}</a> &mdash; All
+                    Ocean Pro Market &mdash; All
                     Rights Reserved
                 </small>
 
